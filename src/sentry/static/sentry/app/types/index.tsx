@@ -511,6 +511,7 @@ export type SentryAppWebhookRequest = {
     name: string;
   };
   responseCode: number;
+  errorId?: string;
 };
 
 export type PermissionValue = 'no-access' | 'read' | 'write' | 'admin';
