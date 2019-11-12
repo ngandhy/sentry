@@ -27,7 +27,7 @@ import {PageContent, PageHeader} from 'app/styles/organization';
 import space from 'app/styles/space';
 
 import Events from './events';
-import EventDetails from './eventDetails';
+import EventDetails from './old_eventDetails';
 import SavedQueryButtonGroup from './savedQuery';
 import EventView from './eventView';
 import EventInputName from './eventInputName';
