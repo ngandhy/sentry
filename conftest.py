@@ -10,17 +10,6 @@ pytest_plugins = ["sentry.utils.pytest"]
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-# XXX: hardcoding sql_log path here cause
-# from sentry.testutils.cases import sql_log
-# will cause improperlyconfigured problems; our imports are too op lol
-sql_log = open("/tmp/shitty_sql_log", "w")
-
-
-@pytest.fixture(scope="function", autouse=True)
-def log_test_module(request):
-    test_name = os.environ.get("PYTEST_CURRENT_TEST").split()[0]
-    sql_log.write(test_name + "\n" + "=" * len(test_name) + "\n\n")
-
 
 def pytest_configure(config):
     import warnings

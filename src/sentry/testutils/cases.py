@@ -458,13 +458,13 @@ class SQLRecordingTestCase(TestCase):
         t = Template(
             '{{count}} quer{{count|pluralize:"y,ies"}} in {{time}} seconds:\n\n{% for sql in sqllog %}[{{forloop.counter}}] {{sql.time}}s: {{sql.sql|safe}}{% if not forloop.last %}\n\n{% endif %}{% endfor %}'
         )
-        sql_log.write(
-            t.render(
-                Context(
-                    {"sqllog": connection.queries, "count": len(connection.queries), "time": time}
-                )
-            )
+        log = t.render(
+            Context({"sqllog": connection.queries, "count": len(connection.queries), "time": time})
         )
+        if "= (SELECT" in log:
+            test_name = os.environ.get("PYTEST_CURRENT_TEST").split()[0]
+            sql_log.write(test_name + "\n" + "=" * len(test_name) + "\n\n")
+            sql_log.write(log)
 
 
 class TestCase(SQLRecordingTestCase, BaseTestCase, TestCase):
