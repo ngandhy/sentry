@@ -435,56 +435,44 @@ class _AssertQueriesContext(CaptureQueriesContext):
                 "no query against %s emitted, add debug=True to see all the queries" % (table),
             )
 
+
 from django.db import connection, reset_queries
+from django.template import Template, Context
 
-class TestCase(BaseTestCase, TestCase):
+# lol
+sql_log = open("/tmp/shitty_sql_log", "w")
+
+
+class SQLRecordingTestCase(TestCase):
     @staticmethod
     def setUpClass():
         # The test runner sets DEBUG to False. Set to True to enable SQL logging.
         settings.DEBUG = True
         reset_queries()
-        super(TestCase, TestCase).setUpClass()
+        super(SQLRecordingTestCase, SQLRecordingTestCase).setUpClass()
 
     @staticmethod
     def tearDownClass():
-        super(TestCase, TestCase).tearDownClass()
-        import sys
-        from django.template import Template, Context
-
-
+        super(SQLRecordingTestCase, SQLRecordingTestCase).tearDownClass()
         time = sum([float(q["time"]) for q in connection.queries])
         t = Template(
             '{{count}} quer{{count|pluralize:"y,ies"}} in {{time}} seconds:\n\n{% for sql in sqllog %}[{{forloop.counter}}] {{sql.time}}s: {{sql.sql|safe}}{% if not forloop.last %}\n\n{% endif %}{% endfor %}'
         )
-        print t.render(
-            Context({"sqllog": connection.queries, "count": len(connection.queries), "time": time})
+        sql_log.write(
+            t.render(
+                Context(
+                    {"sqllog": connection.queries, "count": len(connection.queries), "time": time}
+                )
+            )
         )
 
 
-class TransactionTestCase(BaseTestCase, TransactionTestCase):
-
-    @staticmethod
-    def setUpClass():
-        # The test runner sets DEBUG to False. Set to True to enable SQL logging.
-        settings.DEBUG = True
-        reset_queries()
-        super(TestCase, TestCase).setUpClass()
-
-    @staticmethod
-    def tearDownClass():
-        super(TestCase, TestCase).tearDownClass()
-        import sys
-        from django.template import Template, Context
+class TestCase(SQLRecordingTestCase, BaseTestCase, TestCase):
+    pass
 
 
-        time = sum([float(q["time"]) for q in connection.queries])
-        t = Template(
-            '{{count}} quer{{count|pluralize:"y,ies"}} in {{time}} seconds:\n\n{% for sql in sqllog %}[{{forloop.counter}}] {{sql.time}}s: {{sql.sql|safe}}{% if not forloop.last %}\n\n{% endif %}{% endfor %}'
-        )
-        print t.render(
-            Context({"sqllog": connection.queries, "count": len(connection.queries), "time": time})
-        )
-
+class TransactionTestCase(SQLRecordingTestCase, BaseTestCase, TransactionTestCase):
+    pass
 
 
 class APITestCase(BaseTestCase, BaseAPITestCase):
