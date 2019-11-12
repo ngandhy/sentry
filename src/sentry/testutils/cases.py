@@ -459,10 +459,11 @@ class SQLRecordingTestCase(TestCase):
         log = t.render(
             Context({"sqllog": connection.queries, "count": len(connection.queries), "time": time})
         )
-        if "= (SELECT" in log:
+        interesting_lines = [line for line in log.split("\n") if "= (SELECT" in line]
+        if interesting_lines:
             test_name = os.environ.get("PYTEST_CURRENT_TEST").split()[0]
             sql_log.write(test_name + "\n" + "=" * len(test_name) + "\n\n")
-            sql_log.write(log)
+            sql_log.write("\n".join(interesting_lines))
 
 
 @override_settings(ROOT_URLCONF="sentry.web.urls")
