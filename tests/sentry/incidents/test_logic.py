@@ -1328,7 +1328,7 @@ class UpdateAlertRuleTriggerAction(BaseAlertRuleTriggerActionTest, TestCase):
         )
 
     def test(self):
-        type = AlertRuleTriggerAction.Type.SLACK
+        type = AlertRuleTriggerAction.Type.EMAIL
         target_type = AlertRuleTriggerAction.TargetType.SPECIFIC
         target_identifier = "#ruhroh"
         update_alert_rule_trigger_action(
