@@ -187,7 +187,7 @@ const babelOptions = {...babelConfig, cacheDirectory: true};
 /**
  * Main Webpack config for Sentry React SPA.
  */
-const appConfig = {
+let appConfig = {
   mode: WEBPACK_MODE,
   entry: {
     /**
@@ -230,6 +230,9 @@ const appConfig = {
           },
           {
             loader: 'ts-loader',
+            options: {
+              transpileOnly: false,
+            },
           },
         ],
       },
@@ -455,6 +458,12 @@ if (IS_PRODUCTION) {
   minificationPlugins.forEach(function(plugin) {
     appConfig.plugins.push(plugin);
   });
+}
+
+if (process.env.MEASURE) {
+  const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+  const smp = new SpeedMeasurePlugin();
+  appConfig = smp.wrap(appConfig);
 }
 
 module.exports = appConfig;
