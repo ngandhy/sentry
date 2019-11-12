@@ -48,6 +48,11 @@ class GlobalSelectionHeader extends React.Component {
     projects: PropTypes.arrayOf(SentryTypes.Project).isRequired,
 
     /**
+     * Whether or not the projects are currently being loaded in
+     */
+    loadingProjects: PropTypes.bool,
+
+    /**
      * A project will be forced from parent component (selection is disabled, and if user
      * does not have multi-project support enabled, it will not try to auto select a project).
      *
@@ -484,6 +489,7 @@ class GlobalSelectionHeader extends React.Component {
       className,
       shouldForceProject,
       forceProject,
+      loadingProjects,
       organization,
       showAbsolute,
       showRelative,
@@ -507,6 +513,7 @@ class GlobalSelectionHeader extends React.Component {
             shouldForceProject={shouldForceProject}
             forceProject={forceProject}
             projects={projects}
+            loadingProjects={loadingProjects}
             nonMemberProjects={nonMemberProjects}
             value={this.state.projects || this.props.selection.projects}
             onChange={this.handleChangeProjects}
@@ -521,6 +528,8 @@ class GlobalSelectionHeader extends React.Component {
             <HeaderItemPosition>
               <MultipleEnvironmentSelector
                 organization={organization}
+                projects={projects}
+                loadingProjects={loadingProjects}
                 selectedProjects={selectedProjects}
                 value={this.state.environments || this.props.selection.environments}
                 onChange={this.handleChangeEnvironments}
