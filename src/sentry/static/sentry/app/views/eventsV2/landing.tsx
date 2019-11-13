@@ -15,10 +15,8 @@ import localStorage from 'app/utils/localStorage';
 import withOrganization from 'app/utils/withOrganization';
 
 import GlobalSelectionHeader from 'app/components/organizations/globalSelectionHeader';
-import PageHeading from 'app/components/pageHeading';
 import Banner from 'app/components/banner';
 import Button from 'app/components/button';
-import BetaTag from 'app/components/betaTag';
 import Feature from 'app/components/acl/feature';
 import SearchBar from 'app/views/events/searchBar';
 import NoProjectMessage from 'app/components/noProjectMessage';
@@ -126,12 +124,26 @@ class DiscoverLanding extends React.Component<Props> {
     );
   }
 
+  renderQueryRename = (hasQuery: boolean, eventView: EventView) => {
+    if (!hasQuery) {
+      return null;
+    }
+
+    const {organization} = this.props;
+
+    return (
+      <div>
+        <EventInputName organization={organization} eventView={eventView} />
+      </div>
+    );
+  };
+
   render() {
     const {organization, location, router} = this.props;
     const eventView = EventView.fromLocation(location);
     const documentTitle = this.getDocumentTitle(eventView.name).join(' - ');
 
-    const hasQuery = location.query.field;
+    const hasQuery = eventView.isValid();
 
     return (
       <Feature features={['events-v2']} organization={organization} renderDisabled>
@@ -140,24 +152,8 @@ class DiscoverLanding extends React.Component<Props> {
             <GlobalSelectionHeader organization={organization} />
             <PageContent>
               <NoProjectMessage organization={organization}>
-                {hasQuery && <DiscoverBreadcrumb />}
                 <PageHeader>
-                  <PageHeading>
-                    {t('Discover')}
-                    <BetaTagWrapper>
-                      <BetaTag />
-                    </BetaTagWrapper>
-                    {hasQuery && (
-                      <React.Fragment>
-                        {' \u2014 '}
-                        <EventInputName
-                          organization={organization}
-                          eventView={eventView}
-                        />
-                      </React.Fragment>
-                    )}
-                  </PageHeading>
-
+                  <DiscoverBreadcrumb eventView={hasQuery ? eventView : undefined} />
                   {hasQuery && (
                     <SavedQueryButtonGroup
                       location={location}
@@ -166,6 +162,7 @@ class DiscoverLanding extends React.Component<Props> {
                     />
                   )}
                 </PageHeader>
+                {this.renderQueryRename(hasQuery, eventView)}
                 {!hasQuery && this.renderNewQuery()}
                 {hasQuery && (
                   <Events
@@ -194,11 +191,6 @@ const BannerButton = styled(Button)`
 
 const StyledSearchBar = styled(SearchBar)`
   margin-bottom: ${space(3)};
-`;
-
-// Wrapper is needed because BetaTag discards margins applied directly to it
-const BetaTagWrapper = styled('span')`
-  margin-right: 0.4em;
 `;
 
 export default withOrganization(DiscoverLanding);

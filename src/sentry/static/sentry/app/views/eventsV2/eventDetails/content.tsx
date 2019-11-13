@@ -18,6 +18,7 @@ import overflowEllipsis from 'app/styles/overflowEllipsis';
 import DateTime from 'app/components/dateTime';
 import ExternalLink from 'app/components/links/externalLink';
 import FileSize from 'app/components/fileSize';
+import {PageHeader} from 'app/styles/organization';
 
 import EventView from '../eventView';
 import {hasAggregateField} from '../utils';
@@ -27,6 +28,7 @@ import RelatedEvents from '../relatedEvents';
 import TagsTable from '../tagsTable';
 import EventInterfaces from '../eventInterfaces';
 import LinkedIssuePreview from '../linkedIssuePreview';
+import DiscoverBreadcrumb from '../breadcrumb';
 
 const slugValidator = function(
   props: {[key: string]: any},
@@ -169,43 +171,48 @@ class EventDetailsContent extends React.Component<Props, State> {
 
     return (
       <DocumentTitle title={`${documentTitle} - ${organization.slug} - Sentry`}>
-        <ColumnGrid>
-          <HeaderBox>
-            <EventHeader event={event} />
-            {isGroupedView && <ModalPagination event={event} location={location} />}
-            {isGroupedView &&
-              getDynamicText({
-                value: (
-                  <ModalLineGraph
-                    organization={organization}
-                    currentEvent={event}
-                    location={location}
-                    eventView={eventView}
-                  />
-                ),
-                fixed: 'events chart',
-              })}
-          </HeaderBox>
-          <ContentColumn>
-            <EventInterfaces event={event} projectId={this.projectId} />
-          </ContentColumn>
-          <SidebarColumn>
-            {event.groupID && (
-              <LinkedIssuePreview groupId={event.groupID} eventId={event.eventID} />
-            )}
-            {event.type === 'transaction' && (
-              <RelatedEvents
-                organization={organization}
-                event={event}
-                location={location}
-              />
-            )}
-            <EventMetadata event={event} eventJsonUrl={eventJsonUrl} />
-            <SidebarBlock>
-              <TagsTable tags={event.tags} />
-            </SidebarBlock>
-          </SidebarColumn>
-        </ColumnGrid>
+        <React.Fragment>
+          <PageHeader>
+            <DiscoverBreadcrumb eventView={eventView} event={event} />
+          </PageHeader>
+          <ColumnGrid>
+            <HeaderBox>
+              <EventHeader event={event} />
+              {isGroupedView && <ModalPagination event={event} location={location} />}
+              {isGroupedView &&
+                getDynamicText({
+                  value: (
+                    <ModalLineGraph
+                      organization={organization}
+                      currentEvent={event}
+                      location={location}
+                      eventView={eventView}
+                    />
+                  ),
+                  fixed: 'events chart',
+                })}
+            </HeaderBox>
+            <ContentColumn>
+              <EventInterfaces event={event} projectId={this.projectId} />
+            </ContentColumn>
+            <SidebarColumn>
+              {event.groupID && (
+                <LinkedIssuePreview groupId={event.groupID} eventId={event.eventID} />
+              )}
+              {event.type === 'transaction' && (
+                <RelatedEvents
+                  organization={organization}
+                  event={event}
+                  location={location}
+                />
+              )}
+              <EventMetadata event={event} eventJsonUrl={eventJsonUrl} />
+              <SidebarBlock>
+                <TagsTable tags={event.tags} />
+              </SidebarBlock>
+            </SidebarColumn>
+          </ColumnGrid>
+        </React.Fragment>
       </DocumentTitle>
     );
   }

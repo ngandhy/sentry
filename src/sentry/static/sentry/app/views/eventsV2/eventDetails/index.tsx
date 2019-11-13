@@ -9,8 +9,7 @@ import {Location} from 'history';
 
 import {t} from 'app/locale';
 import GlobalSelectionHeader from 'app/components/organizations/globalSelectionHeader';
-import {PageContent, PageHeader} from 'app/styles/organization';
-import PageHeading from 'app/components/pageHeading';
+import {PageContent} from 'app/styles/organization';
 import NoProjectMessage from 'app/components/noProjectMessage';
 import {Organization, Event} from 'app/types';
 import AsyncComponent from 'app/components/asyncComponent';
@@ -23,7 +22,6 @@ import theme from 'app/utils/theme';
 import withOrganization from 'app/utils/withOrganization';
 
 import {EventQuery} from '../utils';
-import DiscoverBreadcrumb from '../breadcrumb';
 import EventModalContent from '../eventModalContent';
 import EventView from '../eventView';
 import EventDetailsContent from './content';
@@ -101,10 +99,6 @@ class EventDetails extends React.Component<Props> {
           <GlobalSelectionHeader organization={organization} />
           <PageContent>
             <NoProjectMessage organization={organization}>
-              <DiscoverBreadcrumb />
-              <PageHeader>
-                <PageHeading>{t('Discover')}</PageHeading>
-              </PageHeader>
               <EventDetailsContent
                 organization={organization}
                 location={location}
