@@ -63,8 +63,17 @@ type Props = {
 class EventDetails extends React.Component<Props> {
   static propTypes: any = {
     organization: SentryTypes.Organization.isRequired,
-    eventSlug: slugValidator,
     location: PropTypes.object.isRequired,
+  };
+
+  getEventSlug = (): string => {
+    const {eventSlug} = this.props.params;
+
+    if (typeof eventSlug === 'string') {
+      return eventSlug.trim();
+    }
+
+    return '';
   };
 
   getEventView = (): EventView => {
@@ -98,6 +107,7 @@ class EventDetails extends React.Component<Props> {
                 organization={organization}
                 location={location}
                 params={params}
+                eventSlug={this.getEventSlug()}
               />
             </NoProjectMessage>
           </PageContent>
