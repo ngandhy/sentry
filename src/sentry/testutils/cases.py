@@ -441,17 +441,18 @@ from django.template import Template, Context
 sql_log = open("/tmp/shitty_sql_log", "w")
 
 
-class SQLRecordingTestCase(TestCase):
+@override_settings(ROOT_URLCONF="sentry.web.urls")
+class TestCase(BaseTestCase, TestCase):
     @staticmethod
     def setUpClass():
         # The test runner sets DEBUG to False. Set to True to enable SQL logging.
         settings.DEBUG = True
         reset_queries()
-        super(SQLRecordingTestCase, SQLRecordingTestCase).setUpClass()
+        super(TestCase, TestCase).setUpClass()
 
     @staticmethod
     def tearDownClass():
-        super(SQLRecordingTestCase, SQLRecordingTestCase).tearDownClass()
+        super(TestCase, TestCase).tearDownClass()
         time = sum([float(q["time"]) for q in connection.queries])
         t = Template(
             '{{count}} quer{{count|pluralize:"y,ies"}} in {{time}} seconds:\n\n{% for sql in sqllog %}[{{forloop.counter}}] {{sql.time}}s: {{sql.sql|safe}}{% if not forloop.last %}\n\n{% endif %}{% endfor %}'
@@ -466,13 +467,29 @@ class SQLRecordingTestCase(TestCase):
             sql_log.write("\n".join(interesting_lines))
 
 
-@override_settings(ROOT_URLCONF="sentry.web.urls")
-class TestCase(SQLRecordingTestCase, BaseTestCase, TestCase):
-    pass
+class TransactionTestCase(BaseTestCase, TransactionTestCase):
+    @staticmethod
+    def setUpClass():
+        # The test runner sets DEBUG to False. Set to True to enable SQL logging.
+        settings.DEBUG = True
+        reset_queries()
+        super(TransactionTestCase, TransactionTestCase).setUpClass()
 
-
-class TransactionTestCase(SQLRecordingTestCase, BaseTestCase, TransactionTestCase):
-    pass
+    @staticmethod
+    def tearDownClass():
+        super(TransactionTestCase, TransactionTestCase).tearDownClass()
+        time = sum([float(q["time"]) for q in connection.queries])
+        t = Template(
+            '{{count}} quer{{count|pluralize:"y,ies"}} in {{time}} seconds:\n\n{% for sql in sqllog %}[{{forloop.counter}}] {{sql.time}}s: {{sql.sql|safe}}{% if not forloop.last %}\n\n{% endif %}{% endfor %}'
+        )
+        log = t.render(
+            Context({"sqllog": connection.queries, "count": len(connection.queries), "time": time})
+        )
+        interesting_lines = [line for line in log.split("\n") if "= (SELECT" in line]
+        if interesting_lines:
+            test_name = os.environ.get("PYTEST_CURRENT_TEST").split()[0]
+            sql_log.write(test_name + "\n" + "=" * len(test_name) + "\n\n")
+            sql_log.write("\n".join(interesting_lines))
 
 
 class APITestCase(BaseTestCase, BaseAPITestCase):
