@@ -44,7 +44,7 @@ type Props = {
   params: Params;
 };
 
-class EventsV2 extends React.Component<Props> {
+class DiscoverLanding extends React.Component<Props> {
   static propTypes: any = {
     organization: SentryTypes.Organization.isRequired,
     location: PropTypes.object.isRequired,
@@ -212,5 +212,5 @@ const BetaTagWrapper = styled('span')`
   margin-right: 0.4em;
 `;
 
-export default withOrganization(EventsV2);
-export {EventsV2};
+export default withOrganization(DiscoverLanding);
+export {DiscoverLanding};
