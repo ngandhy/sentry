@@ -32,6 +32,7 @@ import EventView from './eventView';
 import EventInputName from './eventInputName';
 import {SAMPLE_VIEWS} from './data';
 import QueryList from './queryList';
+import DiscoverBreadcrumb from './breadcrumb';
 
 const DISPLAY_SEARCH_BAR_FLAG = false;
 
@@ -139,6 +140,7 @@ class DiscoverLanding extends React.Component<Props> {
             <GlobalSelectionHeader organization={organization} />
             <PageContent>
               <NoProjectMessage organization={organization}>
+                {hasQuery && <DiscoverBreadcrumb />}
                 <PageHeader>
                   <PageHeading>
                     {t('Discover')}

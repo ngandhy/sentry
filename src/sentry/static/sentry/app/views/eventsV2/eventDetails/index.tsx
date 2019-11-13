@@ -23,6 +23,7 @@ import theme from 'app/utils/theme';
 import withOrganization from 'app/utils/withOrganization';
 
 import {EventQuery} from '../utils';
+import DiscoverBreadcrumb from '../breadcrumb';
 import EventModalContent from '../eventModalContent';
 import EventView from '../eventView';
 import EventDetailsContent from './content';
@@ -100,6 +101,7 @@ class EventDetails extends React.Component<Props> {
           <GlobalSelectionHeader organization={organization} />
           <PageContent>
             <NoProjectMessage organization={organization}>
+              <DiscoverBreadcrumb />
               <PageHeader>
                 <PageHeading>{t('Discover')}</PageHeading>
               </PageHeader>
