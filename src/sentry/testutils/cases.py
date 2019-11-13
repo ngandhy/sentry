@@ -464,7 +464,7 @@ class TestCase(BaseTestCase, TestCase):
         if interesting_lines:
             test_name = os.environ.get("PYTEST_CURRENT_TEST").split()[0]
             sql_log.write(test_name + "\n" + "=" * len(test_name) + "\n\n")
-            sql_log.write("\n".join(interesting_lines))
+            sql_log.write("\n".join(interesting_lines) + "\n\n")
 
 
 class TransactionTestCase(BaseTestCase, TransactionTestCase):
@@ -489,7 +489,7 @@ class TransactionTestCase(BaseTestCase, TransactionTestCase):
         if interesting_lines:
             test_name = os.environ.get("PYTEST_CURRENT_TEST").split()[0]
             sql_log.write(test_name + "\n" + "=" * len(test_name) + "\n\n")
-            sql_log.write("\n".join(interesting_lines))
+            sql_log.write("\n".join(interesting_lines) + "\n\n")
 
 
 class APITestCase(BaseTestCase, BaseAPITestCase):
