@@ -1,11 +1,17 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import {Params} from 'react-router/lib/Router';
 import {browserHistory} from 'react-router';
 import styled, {css} from 'react-emotion';
 import {omit} from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-
+import DocumentTitle from 'react-document-title';
 import {Location} from 'history';
+
+import {t} from 'app/locale';
+import GlobalSelectionHeader from 'app/components/organizations/globalSelectionHeader';
+import {PageContent, PageHeader} from 'app/styles/organization';
+import PageHeading from 'app/components/pageHeading';
+import NoProjectMessage from 'app/components/noProjectMessage';
 import {Organization, Event} from 'app/types';
 import AsyncComponent from 'app/components/asyncComponent';
 import LoadingMask from 'app/components/loadingMask';
@@ -19,6 +25,7 @@ import withOrganization from 'app/utils/withOrganization';
 import {EventQuery} from '../utils';
 import EventModalContent from '../eventModalContent';
 import EventView from '../eventView';
+import EventDetailsContent from './content';
 
 const slugValidator = function(
   props: {[key: string]: any},
@@ -53,11 +60,61 @@ type Props = {
   params: Params;
 };
 
-type State = {
+class EventDetails extends React.Component<Props> {
+  static propTypes: any = {
+    organization: SentryTypes.Organization.isRequired,
+    eventSlug: slugValidator,
+    location: PropTypes.object.isRequired,
+  };
+
+  getEventView = (): EventView => {
+    const {location} = this.props;
+
+    return EventView.fromLocation(location);
+  };
+
+  getDocumentTitle = (name: string | undefined): Array<string> => {
+    return typeof name === 'string' && String(name).trim().length > 0
+      ? [String(name).trim(), t('Discover')]
+      : [t('Discover')];
+  };
+
+  render() {
+    const {organization, location, params} = this.props;
+    const eventView = this.getEventView();
+
+    const documentTitle = this.getDocumentTitle(eventView.name).join(' - ');
+
+    return (
+      <DocumentTitle title={`${documentTitle} - ${organization.slug} - Sentry`}>
+        <React.Fragment>
+          <GlobalSelectionHeader organization={organization} />
+          <PageContent>
+            <NoProjectMessage organization={organization}>
+              <PageHeader>
+                <PageHeading>{t('Discover')}</PageHeading>
+              </PageHeader>
+              <EventDetailsContent
+                organization={organization}
+                location={location}
+                params={params}
+              />
+            </NoProjectMessage>
+          </PageContent>
+        </React.Fragment>
+      </DocumentTitle>
+    );
+  }
+}
+
+type State2 = {
   event: Event;
 };
 
-class EventDetails extends AsyncComponent<Props, State & AsyncComponent['state']> {
+export class EventDetails2 extends AsyncComponent<
+  Props,
+  State2 & AsyncComponent['state']
+> {
   shouldReload = true;
 
   static propTypes: any = {
