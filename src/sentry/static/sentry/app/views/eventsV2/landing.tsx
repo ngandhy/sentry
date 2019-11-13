@@ -27,11 +27,9 @@ import {PageContent, PageHeader} from 'app/styles/organization';
 import space from 'app/styles/space';
 
 import Events from './events';
-import EventDetails from './old_eventDetails';
 import SavedQueryButtonGroup from './savedQuery';
 import EventView from './eventView';
 import EventInputName from './eventInputName';
-import {getFirstQueryString} from './utils';
 import {SAMPLE_VIEWS} from './data';
 import QueryList from './queryList';
 
@@ -129,12 +127,10 @@ class DiscoverLanding extends React.Component<Props> {
 
   render() {
     const {organization, location, router} = this.props;
-
-    const eventSlug = getFirstQueryString(location.query, 'eventSlug');
     const eventView = EventView.fromLocation(location);
     const documentTitle = this.getDocumentTitle(eventView.name).join(' - ');
 
-    const hasQuery = location.query.field || location.query.eventSlug;
+    const hasQuery = location.query.field;
 
     return (
       <Feature features={['events-v2']} organization={organization} renderDisabled>
@@ -175,15 +171,6 @@ class DiscoverLanding extends React.Component<Props> {
                     location={location}
                     router={router}
                     eventView={eventView}
-                  />
-                )}
-                {hasQuery && eventSlug && (
-                  <EventDetails
-                    organization={organization}
-                    params={this.props.params}
-                    eventSlug={eventSlug}
-                    eventView={eventView}
-                    location={location}
                   />
                 )}
               </NoProjectMessage>
