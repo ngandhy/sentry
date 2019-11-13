@@ -7,5 +7,5 @@ export function generateEventDetailsRoute({
   eventSlug: string;
   organization: Organization;
 }): string {
-  return `/organizations/${organization.slug}/eventsv2/${eventSlug}`;
+  return `/organizations/${organization.slug}/eventsv2/${eventSlug}/`;
 }

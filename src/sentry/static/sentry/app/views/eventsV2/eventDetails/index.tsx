@@ -14,6 +14,7 @@ import NotFound from 'app/components/errors/notFound';
 import SentryTypes from 'app/sentryTypes';
 import space from 'app/styles/space';
 import theme from 'app/utils/theme';
+import withOrganization from 'app/utils/withOrganization';
 
 import {EventQuery} from '../utils';
 import EventModalContent from '../eventModalContent';
@@ -75,11 +76,11 @@ class EventDetails extends AsyncComponent<Props, State & AsyncComponent['state']
     return '';
   };
 
-  getEventView = (): EventView => {
+  getEventView(): EventView {
     const {location} = this.props;
 
     return EventView.fromLocation(location);
-  };
+  }
 
   getEndpoints(): Array<[string, string, {query: EventQuery}]> {
     const {organization, params, location} = this.props;
@@ -147,7 +148,7 @@ class EventDetails extends AsyncComponent<Props, State & AsyncComponent['state']
   }
 }
 
-export default EventDetails;
+export default withOrganization(EventDetails);
 
 const StyledLoadingMask = styled(LoadingMask)`
   z-index: 999999999;

@@ -15,6 +15,7 @@ import {EventViewv1, Organization} from 'app/types';
 import Duration from 'app/components/duration';
 
 import {QueryLink} from './styles';
+import {generateEventDetailsRoute} from './eventDetails/utils';
 
 export const MODAL_QUERY_KEYS = ['eventSlug'] as const;
 export const PIN_ICON = `image://${pinIcon}`;
@@ -350,15 +351,22 @@ export const FIELD_FORMATTERS: FieldFormatters = {
 
 const eventLink = (
   location: Location,
+  organization: Organization,
   data: EventData,
   content: string | React.ReactNode
 ): React.ReactNode => {
   const id = data.id || data.latest_event;
+
+  const eventSlug = `${data['project.name']}:${id}`;
+  const pathname = generateEventDetailsRoute({
+    organization,
+    eventSlug,
+  });
+
   const target = {
-    pathname: location.pathname,
+    pathname,
     query: {
       ...location.query,
-      eventSlug: `${data['project.name']}:${id}`,
     },
   };
   return <OverflowLink to={target}>{content}</OverflowLink>;
@@ -378,28 +386,28 @@ type LinkFormatters = {
 };
 
 export const LINK_FORMATTERS: LinkFormatters = {
-  string: (field, data, {location}) => {
-    return <Container>{eventLink(location, data, data[field])}</Container>;
+  string: (field, data, {location, organization}) => {
+    return <Container>{eventLink(location, organization, data, data[field])}</Container>;
   },
-  number: (field, data, {location}) => {
+  number: (field, data, {location, organization}) => {
     return (
       <NumberContainer>
         {typeof data[field] === 'number'
-          ? eventLink(location, data, <Count value={data[field]} />)
+          ? eventLink(location, organization, data, <Count value={data[field]} />)
           : emptyValue}
       </NumberContainer>
     );
   },
-  integer: (field, data, {location}) => {
+  integer: (field, data, {location, organization}) => {
     return (
       <NumberContainer>
         {typeof data[field] === 'number'
-          ? eventLink(location, data, <Count value={data[field]} />)
+          ? eventLink(location, organization, data, <Count value={data[field]} />)
           : emptyValue}
       </NumberContainer>
     );
   },
-  date: (field, data, {location}) => {
+  date: (field, data, {location, organization}) => {
     let content = emptyValue;
     if (data[field]) {
       content = getDynamicText({
@@ -407,7 +415,7 @@ export const LINK_FORMATTERS: LinkFormatters = {
         fixed: <span>timestamp</span>,
       });
     }
-    return <Container>{eventLink(location, data, content)}</Container>;
+    return <Container>{eventLink(location, organization, data, content)}</Container>;
   },
 };
 
@@ -452,14 +460,18 @@ export const SPECIAL_FIELDS: SpecialFields = {
   },
   transaction: {
     sortField: 'transaction',
-    renderFunc: (data, {location}) => {
+    renderFunc: (data, {location, organization}) => {
       const id = data.id || data.latest_event;
+
+      const eventSlug = `${data['project.name']}:${id}`;
+      const pathname = generateEventDetailsRoute({
+        organization,
+        eventSlug,
+      });
+
       const target = {
-        pathname: location.pathname,
-        query: {
-          ...location.query,
-          eventSlug: `${data['project.name']}:${id}`,
-        },
+        pathname: pathname,
+        query: {...location.query},
       };
       return (
         <Container>
@@ -472,11 +484,18 @@ export const SPECIAL_FIELDS: SpecialFields = {
   },
   title: {
     sortField: 'title',
-    renderFunc: (data, {location}) => {
+    renderFunc: (data, {location, organization}) => {
       const id = data.id || data.latest_event;
+
+      const eventSlug = `${data['project.name']}:${id}`;
+      const pathname = generateEventDetailsRoute({
+        organization,
+        eventSlug,
+      });
+
       const target = {
-        pathname: location.pathname,
-        query: {...location.query, eventSlug: `${data['project.name']}:${id}`},
+        pathname,
+        query: {...location.query},
       };
       return (
         <Container>
