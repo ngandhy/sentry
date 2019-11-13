@@ -153,7 +153,11 @@ class DiscoverLanding extends React.Component<Props> {
             <PageContent>
               <NoProjectMessage organization={organization}>
                 <PageHeader>
-                  <DiscoverBreadcrumb eventView={hasQuery ? eventView : undefined} />
+                  <DiscoverBreadcrumb
+                    eventView={hasQuery ? eventView : undefined}
+                    organization={organization}
+                    location={location}
+                  />
                   {hasQuery && (
                     <SavedQueryButtonGroup
                       location={location}

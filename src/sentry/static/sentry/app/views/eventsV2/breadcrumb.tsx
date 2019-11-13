@@ -1,16 +1,20 @@
 import React from 'react';
 import styled from 'react-emotion';
+import {Location} from 'history';
 
 import {t} from 'app/locale';
-import {Event} from 'app/types';
+import {Event, Organization} from 'app/types';
 import PageHeading from 'app/components/pageHeading';
 import BetaTag from 'app/components/betaTag';
+import Link from 'app/components/links/link';
 
 import EventView from './eventView';
 
 type Props = {
   eventView: EventView | undefined;
   event: Event | undefined;
+  organization: Organization;
+  location: Location;
 };
 class DiscoverBreadcrumb extends React.Component<Props> {
   static defaultProps = {
@@ -39,9 +43,25 @@ class DiscoverBreadcrumb extends React.Component<Props> {
   };
 
   render() {
+    const {organization, location} = this.props;
+
+    // TODO: move this somewhere
+    const query = location.query;
+    delete query.field;
+    delete query.fieldnames;
+    delete query.tag;
+    delete query.sort;
+    delete query.name;
+    delete query.query;
+
+    const target = {
+      pathname: `/organizations/${organization.slug}/eventsv2/`,
+      query,
+    };
+
     return (
       <PageHeading>
-        {t('Discover')}
+        <Link to={target}>{t('Discover')}</Link>
         <BetaTagWrapper>
           <BetaTag />
         </BetaTagWrapper>

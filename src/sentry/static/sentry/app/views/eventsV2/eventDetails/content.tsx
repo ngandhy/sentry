@@ -173,7 +173,12 @@ class EventDetailsContent extends React.Component<Props, State> {
       <DocumentTitle title={`${documentTitle} - ${organization.slug} - Sentry`}>
         <React.Fragment>
           <PageHeader>
-            <DiscoverBreadcrumb eventView={eventView} event={event} />
+            <DiscoverBreadcrumb
+              eventView={eventView}
+              event={event}
+              organization={organization}
+              location={location}
+            />
           </PageHeader>
           <ColumnGrid>
             <HeaderBox>
