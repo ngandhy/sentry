@@ -22,7 +22,7 @@ class DiscoverBreadcrumb extends React.Component<Props> {
     const {eventView, event} = this.props;
     const crumbs: React.ReactNode[] = [];
 
-    if (eventView) {
+    if (eventView && eventView.isValid()) {
       crumbs.push(<span>{' \u2014 '}</span>);
       crumbs.push(<span>{eventView.name}</span>);
     }
